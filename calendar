@@ -10,6 +10,17 @@
 
 using namespace std;
 
+int dayValueCalculation(int dayValue0, int monthIndex[4], int quarter, int weekShift[12]) {
+    int dayValue = dayValue0;
+    for (int shiftCount = 0; shiftCount < weekShift[monthIndex[quarter]]; ++shiftCount) {
+        ++dayValue;
+        if (dayValue > 7) {
+            dayValue = 1;
+        }
+    }
+    return dayValue;
+}
+
 void firstWeek(int *dayValue, int *dayIndex) {
     for (*dayIndex = 1; *dayIndex < *dayValue; ++(*dayIndex)) {
             cout << setw(5) << " ";
@@ -61,7 +72,7 @@ void normalWeek(int *dayValue, int *dayIndex, int monthIndex[4], int quarter, in
 int main() {
     int year, dayValue0, dayValue1, dayValue2, dayValue3, dayIndex1, dayIndex2, dayIndex3, emptyDay,
     numberOfDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, weekShift[12] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
-    bool century, leapYear, lastDayIsMon1, lastDayIsMon2, lastDayIsMon3;
+    bool century, lastDayIsMon1, lastDayIsMon2, lastDayIsMon3;
     string monthName[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September",
     "October", "November", "December"};
     
@@ -79,15 +90,13 @@ int main() {
                 for (dayIndex1 = 2; dayIndex1 <= 11; ++dayIndex1) {
                     ++weekShift[dayIndex1];
                 }
-                leapYear = true;
             }
         } else {
             --dayValue0;
             ++numberOfDays[1];
             for (dayIndex1 = 2; dayIndex1 <= 11; ++dayIndex1) {
                     ++weekShift[dayIndex1];
-                }
-            leapYear = true;
+            }
         }
     }
     if (year / 100 == 17 || year / 100 == 18 || year / 100 == 19 || year / 100 == 20) {
@@ -140,31 +149,16 @@ int main() {
         cout << "              " << monthName[monthIndex1[quarter]] << "                            " << monthName[monthIndex2[quarter]] << "                                 " << monthName[monthIndex3[quarter]] << endl;
         cout << "-----------------------------------" << "  -----------------------------------"  << "  -----------------------------------" << endl;
         cout << "  Mon  Tue  Wed  Thu  Fri  Sat  Sun" << "    Mon  Tue  Wed  Thu  Fri  Sat  Sun" << "    Mon  Tue  Wed  Thu  Fri  Sat  Sun" << endl;
-        dayValue1 = dayValue0;
-        dayValue2 = dayValue0;
-        dayValue3 = dayValue0;
-            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex1[quarter]]; ++dayIndex1) {
-                ++dayValue1;
-                if (dayValue1 > 7) {
-                    dayValue1 = 1;
-                }
-            }
-            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex2[quarter]]; ++dayIndex1) {
-                ++dayValue2;
-                if (dayValue2 > 7) {
-                    dayValue2 = 1;
-                }
-            }
-            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex3[quarter]]; ++dayIndex1) {
-                ++dayValue3;
-                if (dayValue3 > 7) {
-                    dayValue3 = 1;
-                }
-            }
+        
+        dayValue1 = dayValueCalculation(dayValue0, monthIndex1, quarter, weekShift);
+        dayValue2 = dayValueCalculation(dayValue0, monthIndex2, quarter, weekShift);
+        dayValue3 = dayValueCalculation(dayValue0, monthIndex3, quarter, weekShift);
+        
         firstWeek(&dayValue1, &dayIndex1);
         firstWeek(&dayValue2, &dayIndex2);
         firstWeek(&dayValue3, &dayIndex3);
         cout << endl;
+        
         for (int weekCount = 0; weekCount <= 4; ++weekCount) {
             if (dayIndex1 <= numberOfDays[monthIndex1[quarter]]) {
                 normalWeek(&dayValue1, &dayIndex1, monthIndex1, quarter, numberOfDays, &lastDayIsMon1);
@@ -192,6 +186,7 @@ int main() {
             }
             cout << endl;
         }
+        
         lastDayIsMon1 = false;
         lastDayIsMon2 = false;
         lastDayIsMon3 = false;
