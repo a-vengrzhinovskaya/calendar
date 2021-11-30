@@ -1,0 +1,98 @@
+/*******************************
+ * Автор: Венгржиновская А. С. *
+ * Дата: 12.11.2021            *
+ * Календарь                   *
+********************************/
+
+#include <iostream>
+#include <cstring>
+#include <iomanip>
+
+using namespace std;
+
+int main() {
+    int year, dayValue, dayIndex, numberOfDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    bool century;
+    string monthName[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December"};
+    
+    cout << "Year: ";
+    cin >> year;
+    
+    dayValue = year % 100;
+    dayValue /= 4;
+    dayValue += 2;
+    if (year % 4 == 0) {
+        if (year % 100 == 0) {
+            if (year % 400 == 0) {
+                --dayValue;
+                ++numberOfDays[1];
+            }
+        } else {
+            --dayValue;
+            ++numberOfDays[1];
+        }
+    }
+    if (year / 100 == 17 || year / 100 == 18 || year / 100 == 19 || year / 100 == 20) {
+        century = true;
+    }
+    while (century != true) {
+        if (year < 1700) {
+            year += 400;
+        } else {
+            year -= 400;
+        }
+        if (year / 100 == 17 || year / 100 == 18 || year / 100 == 19 || year / 100 == 20) {
+            century = true;
+        }
+    }
+    switch (year / 100) {
+        case 17: {
+            dayValue += 4;
+            break;
+        }
+        case 18: {
+            dayValue += 2;
+            break;
+        }
+        case 19: {
+            dayValue += 0;
+            break;
+        }
+        case 20: {
+            dayValue += 6;
+        }
+    }
+    dayValue += year % 100;
+    dayValue %= 7;
+    
+    if (dayValue != 0 && dayValue != 1) {
+        --dayValue;
+    } else {
+        if (dayValue == 0) {
+            dayValue = 6;
+        } else {
+            dayValue = 7;
+        }
+    }
+    
+    for (int monthIndex = 0; monthIndex <= 11; ++monthIndex) {
+        cout << "-----------------------------------" <<endl;
+        cout << "              " << monthName[monthIndex] <<endl;
+        cout << "-----------------------------------" <<endl;
+        cout << "  Mon  Tue  Wed  Thu  Fri  Sat  Sun" << endl;
+        for (dayIndex = 1; dayIndex < dayValue; ++dayIndex) {
+            cout << setw(5) << " ";
+        }
+        for (dayIndex = 1; dayIndex <= numberOfDays[monthIndex]; ++dayIndex) {
+            cout << setw(5) << dayIndex;
+            ++dayValue;
+            if (dayValue > 7) {
+                dayValue = 1;
+                cout << endl;
+            }
+        }
+        cout << endl;
+    }
+    cout << "-----------------------------------" <<endl;
+}
