@@ -10,27 +10,84 @@
 
 using namespace std;
 
+void firstWeek(int *dayValue, int *dayIndex) {
+    for (*dayIndex = 1; *dayIndex < *dayValue; ++(*dayIndex)) {
+            cout << setw(5) << " ";
+    }
+    *dayIndex = 1;
+    while (*dayValue <= 7) {
+    cout << setw(5) << *dayIndex;
+    ++(*dayIndex);
+    ++(*dayValue);
+    }
+    *dayValue = 1;
+    cout << "  ";
+}
+
+void normalWeek(int *dayValue, int *dayIndex, int monthIndex[4], int quarter, int numberOfDays[12], bool *lastDayIsMon) {
+    for (*dayIndex; *dayIndex <= numberOfDays[monthIndex[quarter]]; ++(*dayIndex)) {
+        if (*lastDayIsMon == true) {
+            cout << setw(5) << numberOfDays[monthIndex[quarter]];
+            while (*dayValue < 7) {
+                cout << setw (5) << " ";
+                ++(*dayValue);
+            }
+            ++(*dayIndex);
+            break;
+        }
+        cout << setw(5) << *dayIndex;
+        ++(*dayValue);
+        if (*dayIndex + 1 == numberOfDays[monthIndex[quarter]]) {
+            if (*dayValue > 7) {
+                *lastDayIsMon = true;
+            } else {
+                ++(*dayIndex);
+                cout << setw (5) << *dayIndex;
+                while (*dayValue < 7) {
+                    cout << setw (5) << " ";
+                    ++(*dayValue);
+                }
+            }
+        }
+        if (*dayValue > 7) {
+            *dayValue = 1;
+            ++(*dayIndex);
+            break;
+        }
+    }
+    cout << "  ";
+}
+
 int main() {
-    int year, dayValue, dayIndex, numberOfDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    bool century;
+    int year, dayValue0, dayValue1, dayValue2, dayValue3, dayIndex1, dayIndex2, dayIndex3, emptyDay,
+    numberOfDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, weekShift[12] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+    bool century, leapYear, lastDayIsMon1, lastDayIsMon2, lastDayIsMon3;
     string monthName[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September",
     "October", "November", "December"};
     
     cout << "Year: ";
     cin >> year;
     
-    dayValue = year % 100;
-    dayValue /= 4;
-    dayValue += 2;
+    dayValue0 = year % 100;
+    dayValue0 /= 4;
+    dayValue0 += 2;
     if (year % 4 == 0) {
         if (year % 100 == 0) {
             if (year % 400 == 0) {
-                --dayValue;
+                --dayValue0;
                 ++numberOfDays[1];
+                for (dayIndex1 = 2; dayIndex1 <= 11; ++dayIndex1) {
+                    ++weekShift[dayIndex1];
+                }
+                leapYear = true;
             }
         } else {
-            --dayValue;
+            --dayValue0;
             ++numberOfDays[1];
+            for (dayIndex1 = 2; dayIndex1 <= 11; ++dayIndex1) {
+                    ++weekShift[dayIndex1];
+                }
+            leapYear = true;
         }
     }
     if (year / 100 == 17 || year / 100 == 18 || year / 100 == 19 || year / 100 == 20) {
@@ -48,51 +105,96 @@ int main() {
     }
     switch (year / 100) {
         case 17: {
-            dayValue += 4;
+            dayValue0 += 4;
             break;
         }
         case 18: {
-            dayValue += 2;
+            dayValue0 += 2;
             break;
         }
         case 19: {
-            dayValue += 0;
+            dayValue0 += 0;
             break;
         }
         case 20: {
-            dayValue += 6;
+            dayValue0 += 6;
         }
     }
-    dayValue += year % 100;
-    dayValue %= 7;
+    dayValue0 += year % 100;
+    dayValue0 %= 7;
     
-    if (dayValue != 0 && dayValue != 1) {
-        --dayValue;
+    if (dayValue0 != 0 && dayValue0 != 1) {
+        --dayValue0;
     } else {
-        if (dayValue == 0) {
-            dayValue = 6;
+        if (dayValue0 == 0) {
+            dayValue0 = 6;
         } else {
-            dayValue = 7;
+            dayValue0 = 7;
         }
     }
     
-    for (int monthIndex = 0; monthIndex <= 11; ++monthIndex) {
-        cout << "-----------------------------------" <<endl;
-        cout << "              " << monthName[monthIndex] <<endl;
-        cout << "-----------------------------------" <<endl;
-        cout << "  Mon  Tue  Wed  Thu  Fri  Sat  Sun" << endl;
-        for (dayIndex = 1; dayIndex < dayValue; ++dayIndex) {
-            cout << setw(5) << " ";
-        }
-        for (dayIndex = 1; dayIndex <= numberOfDays[monthIndex]; ++dayIndex) {
-            cout << setw(5) << dayIndex;
-            ++dayValue;
-            if (dayValue > 7) {
-                dayValue = 1;
-                cout << endl;
+    int monthIndex1[4] = {0, 3, 6, 9}, monthIndex2[4] = {1, 4, 7, 10}, monthIndex3[4] = {2, 5, 8, 11};
+    
+    for (int quarter = 0; quarter <= 3; ++quarter) {
+        cout << "-----------------------------------" << "  -----------------------------------"  << "  -----------------------------------" << endl;
+        cout << "              " << monthName[monthIndex1[quarter]] << "                            " << monthName[monthIndex2[quarter]] << "                                 " << monthName[monthIndex3[quarter]] << endl;
+        cout << "-----------------------------------" << "  -----------------------------------"  << "  -----------------------------------" << endl;
+        cout << "  Mon  Tue  Wed  Thu  Fri  Sat  Sun" << "    Mon  Tue  Wed  Thu  Fri  Sat  Sun" << "    Mon  Tue  Wed  Thu  Fri  Sat  Sun" << endl;
+        dayValue1 = dayValue0;
+        dayValue2 = dayValue0;
+        dayValue3 = dayValue0;
+            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex1[quarter]]; ++dayIndex1) {
+                ++dayValue1;
+                if (dayValue1 > 7) {
+                    dayValue1 = 1;
+                }
             }
-        }
+            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex2[quarter]]; ++dayIndex1) {
+                ++dayValue2;
+                if (dayValue2 > 7) {
+                    dayValue2 = 1;
+                }
+            }
+            for (dayIndex1 = 0; dayIndex1 < weekShift[monthIndex3[quarter]]; ++dayIndex1) {
+                ++dayValue3;
+                if (dayValue3 > 7) {
+                    dayValue3 = 1;
+                }
+            }
+        firstWeek(&dayValue1, &dayIndex1);
+        firstWeek(&dayValue2, &dayIndex2);
+        firstWeek(&dayValue3, &dayIndex3);
         cout << endl;
+        for (int weekCount = 0; weekCount <= 4; ++weekCount) {
+            if (dayIndex1 <= numberOfDays[monthIndex1[quarter]]) {
+                normalWeek(&dayValue1, &dayIndex1, monthIndex1, quarter, numberOfDays, &lastDayIsMon1);
+            } else {
+                for (emptyDay = 1; emptyDay <= 7; ++emptyDay) {
+                    cout << setw (5) << " ";
+                }
+                cout << "  ";
+            }
+            if (dayIndex2 <= numberOfDays[monthIndex2[quarter]]) {
+                normalWeek(&dayValue2, &dayIndex2, monthIndex2, quarter, numberOfDays, &lastDayIsMon2);
+            } else {
+                for (emptyDay = 1; emptyDay <= 7; ++emptyDay) {
+                    cout << setw (5) << " ";
+                }
+                cout << "  ";
+            }
+            if (dayIndex3 <= numberOfDays[monthIndex3[quarter]]) {
+                normalWeek(&dayValue3, &dayIndex3, monthIndex3, quarter, numberOfDays, &lastDayIsMon3);
+            } else {
+                for (emptyDay = 1; emptyDay <= 7; ++emptyDay) {
+                    cout << setw (5) << " ";
+                }
+                cout << "  ";
+            }
+            cout << endl;
+        }
+        lastDayIsMon1 = false;
+        lastDayIsMon2 = false;
+        lastDayIsMon3 = false;
     }
-    cout << "-----------------------------------" <<endl;
+   cout << "-----------------------------------" << "  -----------------------------------"  << "  -----------------------------------";
 }
